@@ -1,0 +1,30 @@
+{
+  "view": "position",
+  "features": [
+    "dx",
+    "dy",
+    "turn_intensity"
+  ],
+  "model": "E_pure_mse_seed7.keras",
+  "n_val_sequences": 39882,
+  "quantiles": {
+    "per_ts_thr": 0.999,
+    "mean_thr": 0.99,
+    "extreme_ts_thr": 0.9999
+  },
+  "per_ts_thr": {
+    "dx": 0.08048849527990265,
+    "dy": 0.08560505910565536,
+    "turn_intensity": 0.7583080698460105
+  },
+  "mean_thr": {
+    "dx": 0.018855984492656717,
+    "dy": 0.021910550763123097,
+    "turn_intensity": 0.14295024722660915
+  },
+  "extreme_ts_thr": {
+    "dx": 0.17492646445419807,
+    "dy": 0.1474744507089499,
+    "turn_intensity": 1.5170347687359067
+  }
+}

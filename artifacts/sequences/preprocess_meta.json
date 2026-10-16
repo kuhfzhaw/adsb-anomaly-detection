@@ -1,0 +1,23 @@
+{
+  "input": "<ADSB_BASE>/output/unified_pipeline/t_unified_final.parquet",
+  "flights_in_file": 9924,
+  "flights_failing_check": 0,
+  "split": {
+    "train": {
+      "flights": 6946,
+      "sequences": 279347
+    },
+    "val": {
+      "flights": 993,
+      "sequences": 39882
+    },
+    "test": {
+      "flights": 1985,
+      "sequences": 78033
+    }
+  },
+  "rejected_sequences": 287107,
+  "seq_len": 60,
+  "stride": 15,
+  "split_seed": 42
+}

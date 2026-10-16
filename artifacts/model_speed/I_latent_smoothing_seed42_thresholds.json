@@ -1,0 +1,30 @@
+{
+  "view": "speed",
+  "features": [
+    "groundspeed",
+    "delta_gs",
+    "gs_diff"
+  ],
+  "model": "I_latent_smoothing_seed42.keras",
+  "n_val_sequences": 39882,
+  "quantiles": {
+    "per_ts_thr": 0.999,
+    "mean_thr": 0.99,
+    "extreme_ts_thr": 0.9999
+  },
+  "per_ts_thr": {
+    "groundspeed": 0.00028137144777348424,
+    "delta_gs": 0.018902556444396427,
+    "gs_diff": 0.0722212589031173
+  },
+  "mean_thr": {
+    "groundspeed": 4.569306023322817e-05,
+    "delta_gs": 0.0024441157733748053,
+    "gs_diff": 0.010231629559207249
+  },
+  "extreme_ts_thr": {
+    "groundspeed": 0.00202730508816966,
+    "delta_gs": 0.20247326448738956,
+    "gs_diff": 0.2217824532728494
+  }
+}

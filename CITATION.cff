@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Feature-Specific Anomaly Detection for ADS-B Trajectory Data Using LSTM Autoencoders (code and models)"
+type: software
+authors:
+  - family-names: Kuhn
+    given-names: Tiffany
+    affiliation: "ZHAW Centre for Aviation"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
+  - family-names: Waltert
+    given-names: Manuel
+    affiliation: "ZHAW Centre for Aviation"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
+repository-code: "https://github.com/kuhfzhaw/adsb-anomaly-detection"
+license: CC-BY-4.0
+version: "1.0.0"
+date-released: "2026-10-22"
+keywords:
+  - ADS-B
+  - anomaly detection
+  - LSTM autoencoder
+  - OpenSky Network
+# doi: 10.5281/zenodo.XXXXXXX   # add after the Zenodo release
+preferred-citation:
+  type: conference-paper
+  title: "Feature-Specific Anomaly Detection for ADS-B Trajectory Data Using LSTM Autoencoders"
+  authors:
+    - family-names: Kuhn
+      given-names: Tiffany
+    - family-names: Waltert
+      given-names: Manuel
+  collection-title: "OpenSky Symposium 2026 (OSN26)"
+  year: 2026

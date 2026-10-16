@@ -1,0 +1,30 @@
+{
+  "view": "vertical",
+  "features": [
+    "altitude",
+    "vertical_rate",
+    "vs_diff"
+  ],
+  "model": "I_altitude_latent_smoothing_seed42.keras",
+  "n_val_sequences": 39882,
+  "quantiles": {
+    "per_ts_thr": 0.999,
+    "mean_thr": 0.99,
+    "extreme_ts_thr": 0.9999
+  },
+  "per_ts_thr": {
+    "altitude": 0.00014273030738664786,
+    "vertical_rate": 0.010259794443754647,
+    "vs_diff": 0.010166676563143462
+  },
+  "mean_thr": {
+    "altitude": 2.2565126722865242e-05,
+    "vertical_rate": 0.0017089417034876495,
+    "vs_diff": 0.0015693730088220201
+  },
+  "extreme_ts_thr": {
+    "altitude": 0.000640941025521868,
+    "vertical_rate": 0.04145604081032153,
+    "vs_diff": 0.030892443312996953
+  }
+}
