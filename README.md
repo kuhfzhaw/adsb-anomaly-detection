@@ -205,7 +205,7 @@ Each injection run uses one model seed (default 42 via `--model`); `aggregate_cr
 under each `artifacts/inject_<view>/`. To evaluate the other two models on the same injected flights (cross-model tables), add
 `--cross <view>=<model.keras> ...`, for example `--cross speed=artifacts/model_speed/I_latent_smoothing_seed42.keras`.
 
-The cluster runs used SLURM; site-specific job scripts are not included. Check each script's
+Check each script's
 `--help` for the remaining options.
 
 ## License
