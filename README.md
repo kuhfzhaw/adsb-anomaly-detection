@@ -15,6 +15,7 @@ Swiss airspace (OpenSky Network, 24 days of 2024). Each model reconstructs
 | Vertical | `altitude`, `vertical_rate`, `vs_diff`    | `I_altitude_latent_smoothing`   |
 
 Six seeds per model: 42, 7, 123, 155, 17, 98.
+Config names are internal labels from our experiments.
 
 ## Quick start: find anomalies in your own OpenSky data
 
