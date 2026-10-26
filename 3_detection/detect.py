@@ -19,8 +19,11 @@ The pipeline's rule violations (dist_diff, gs_jump, vertical_rate, gs_diff, vs_d
 they do not influence the model result.
 
 Usage:
-  python detect.py --input my_file.parquet --out_dir result [--r 1.5] [--seeds 42 | --seeds all]
+  python 3_detection/detect.py --input my_file.parquet --out_dir result [--r 1.5] [--seeds 42 | --seeds all]
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import argparse
 import json
 import os
@@ -30,7 +33,7 @@ import time
 import numpy as np
 import pandas as pd
 
-HERE = os.path.dirname(os.path.abspath(__file__))
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SEQ_LEN, STRIDE = 60, 15
 ALL_SEEDS = [42, 7, 123, 155, 17, 98]
 MODEL_NAMES = {"position": "E_pure_mse", "speed": "I_latent_smoothing",
@@ -245,6 +248,7 @@ def main():
     os.makedirs(args.out_dir, exist_ok=True)
     os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")
     sys.path.insert(0, HERE)
+    sys.path.insert(0, os.path.join(HERE, "1_data"))
 
     # heavy imports only here
     from traffic.core import Flight

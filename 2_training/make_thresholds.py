@@ -9,8 +9,11 @@ Same computation as in cross_eval.Det:
   extreme_ts_thr  99.99 % quantile of the per-step errors (variant mpx only)
 
 Usage (compute node, TensorFlow required):
-  ADSB_BASE=<project folder containing artifacts/sequences/...> python make_thresholds.py [--model_root <folder>]
+  ADSB_BASE=<project folder containing artifacts/sequences/...> python 2_training/make_thresholds.py [--model_root <folder>]
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import argparse
 import json
 import os
@@ -21,7 +24,7 @@ import tensorflow as tf
 from adsb_utils import compute_feature_thresholds
 from pipeline_common import VIEWS
 
-HERE = os.path.dirname(os.path.abspath(__file__))
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = os.environ.get("ADSB_BASE", HERE)
 MODELS = {"position": "E_pure_mse",
           "speed": "I_latent_smoothing",

@@ -1,7 +1,7 @@
 """Combined evaluation of the injection / cross runs (3 models x seeds) for the paper.
 
 Usage (project folder, CPU is enough):
-  python aggregate_cross.py \
+  python 4_evaluation/aggregate_cross.py \
       --pos    artifacts/inject_position \
       --speed  artifacts/inject_speed \
       --vertical artifacts/inject_vertical \
@@ -12,10 +12,13 @@ Missing folders are skipped. Main metric: detected_net (%, event level), mean ov
 Output: report.txt (everything important, ready to copy), plus CSV files:
   own_<view>.csv, limits_<view>.csv, cross_matrix.csv, controls.csv
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import argparse, glob, os, re, sys
 import numpy as np
 import pandas as pd
-_BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.abspath(__file__)))
+_BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 METRICS = ["n_events", "n_seq", "detected_seq", "detected_net", "detected_raw", "chance",
            "eff_dev_kt", "eff_dev", "n_lost", "n_no_clean"]

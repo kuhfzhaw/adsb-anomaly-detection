@@ -21,13 +21,13 @@ Config names are internal labels from our experiments.
 
 ```bash
 pip install -r requirements.txt
-python detect.py --input my_flights.parquet --out_dir results --r 1.5
+python 3_detection/detect.py --input my_flights.parquet --out_dir results --r 1.5
 ```
 
 Tested with Python 3.13.
 
 **Quick check.** No example data is shipped, because OpenSky data may not be redistributed. To try the detector,
-fetch a single day as described under [Data](#data) and run `python detect.py --input <day file> --max_flights 30
+fetch a single day as described under [Data](#data) and run `python 3_detection/detect.py --input <day file> --max_flights 30
 --out_dir results` on it.
 
 **Input.** A Parquet or CSV file with one row per second and flight, in the format of
@@ -97,28 +97,28 @@ two time steps exceed `r * theta_f`. Thresholds are stored next to each model as
 
 ## Repository layout
 
-Flat structure; scripts import each other by file name.
+The scripts are grouped by pipeline stage. `adsb_utils.py` and `pipeline_common.py` stay in the
+repository root and are imported by all scripts. All commands are run from the repository root.
 
 | File | Purpose |
 |------|---------|
-| `detect.py` | Apply the trained models to your own OpenSky file |
-| `fetch_opensky.py`, `preprocess_opensky.py` | Fetch raw OpenSky data and resample it to daily 1 Hz files |
-| `clean_flights.py` | Raw OpenSky day files to one cleaned table (`t_unified_final.parquet`) |
-| `prepare_sequences.py` | Flight filtering, 60 s sequences (stride 15), train/val/test split by flight |
-| `make_views.py` | Per-feature-group views, scaler fitted on train |
-| `train_models.py` | Model training, one run per view and seed (`--view position\|speed\|vertical`) |
-| `make_thresholds.py` | Thresholds from the validation set |
-| `baseline_fpr.py` | Share of normal test sequences flagged (false-alarm rates) |
-| `inject_anomaly.py` | Synthetic anomaly injection tests (`--view position\|speed\|vertical`) |
-| `aggregate_cross.py`, `cross_eval.py` | Cross-model evaluation (which model flags which injection) |
-| `eval_excluded.py` | Evaluation on sequences excluded by the quality filter (detection at the rule violation, all three models) |
+| `3_detection/detect.py` | Apply the trained models to your own OpenSky file |
+| `1_data/fetch_opensky.py`, `1_data/preprocess_opensky.py` | Fetch raw OpenSky data and resample it to daily 1 Hz files |
+| `1_data/clean_flights.py` | Raw OpenSky day files to one cleaned table (`t_unified_final.parquet`) |
+| `2_training/prepare_sequences.py` | Flight filtering, 60 s sequences (stride 15), train/val/test split by flight |
+| `2_training/make_views.py` | Per-feature-group views, scaler fitted on train |
+| `2_training/train_models.py` | Model training, one run per view and seed (`--view position\|speed\|vertical`) |
+| `2_training/make_thresholds.py` | Thresholds from the validation set |
+| `4_evaluation/baseline_fpr.py` | Share of normal test sequences flagged (false-alarm rates) |
+| `4_evaluation/inject_anomaly.py` | Synthetic anomaly injection tests (`--view position\|speed\|vertical`) |
+| `4_evaluation/aggregate_cross.py`, `4_evaluation/cross_eval.py` | Cross-model evaluation (which model flags which injection) |
+| `4_evaluation/eval_excluded.py` | Evaluation on sequences excluded by the quality filter (detection at the rule violation, all three models) |
 | `adsb_utils.py` | Shared helpers: filtering, sequence building, anomaly flagging, thresholds |
 | `pipeline_common.py` | Feature and view definitions. `altitude_div` and `altitude_mul` are referenced by the saved vertical scaler (`scaler.joblib`); do not rename or move them |
 | `artifacts/` | Trained models, scalers, thresholds, split, preprocessing metadata (see below) |
 
 ### `artifacts/`
-
-Everything the pipeline reads and writes lives here (default: next to the scripts, or under `$ADSB_BASE`).
+Everything the pipeline reads and writes lives here (default: in the repository root, or under `$ADSB_BASE`).
 Included in the repository:
 
 ```
@@ -149,10 +149,10 @@ never part of this repository):
 
 ```bash
 # 1. hourly raw files for Swiss airspace (lat 44.05-48.92, lon 4.38-11.24)
-python fetch_opensky.py --dates 2024-02-15 2024-03-01 --out_dir data_fetching2024
+python 1_data/fetch_opensky.py --dates 2024-02-15 2024-03-01 --out_dir data_fetching2024
 
 # 2. one 1 Hz file per day, clipped to the Swiss FIR (LSASFRA)
-python preprocess_opensky.py --start 2024-02-15 --end 2024-03-01 --in_dir data_fetching2024
+python 1_data/preprocess_opensky.py --start 2024-02-15 --end 2024-03-01 --in_dir data_fetching2024
 ```
 
 The result (`data_fetching2024/preprocessed/<YYYY_MM_DD>.parquet`) is the input of
@@ -174,31 +174,31 @@ models: it loads them from `artifacts/` next to the script (or from `--model_roo
 export ADSB_BASE=/path/to/workdir
 
 # 1. raw day files -> unified table (artifacts/pipeline/t_unified_final.parquet)
-for i in $(seq 0 23); do python clean_flights.py --day_index $i; done   # one run per day (24 days)
-python clean_flights.py --combine --write_final
+for i in $(seq 0 23); do python 1_data/clean_flights.py --day_index $i; done   # one run per day (24 days)
+python 1_data/clean_flights.py --combine --write_final
 
 # 2. sequences and split (artifacts/sequences)
-python prepare_sequences.py
+python 2_training/prepare_sequences.py
 
 # 3. feature-group views and scalers
-python make_views.py
+python 2_training/make_views.py
 
 # 4. training, one run per view and seed (6 seeds: 42 7 123 155 17 98)
 for s in 42 7 123 155 17 98; do
-  python train_models.py --view position --seed $s     # E_pure_mse
-  python train_models.py --view speed    --seed $s     # I_latent_smoothing
-  python train_models.py --view vertical --seed $s     # I_altitude_latent_smoothing
+  python 2_training/train_models.py --view position --seed $s     # E_pure_mse
+  python 2_training/train_models.py --view speed    --seed $s     # I_latent_smoothing
+  python 2_training/train_models.py --view vertical --seed $s     # I_altitude_latent_smoothing
 done
 
 # 5. thresholds (needs all six seeds) and false-alarm rates on normal test sequences
-python make_thresholds.py
-python baseline_fpr.py
+python 2_training/make_thresholds.py
+python 4_evaluation/baseline_fpr.py
 
 # 6. injection tests (one run per view; see --help for all options), then aggregation
-python inject_anomaly.py --view position --r 1 1.5 2 --out_dir artifacts/inject_position/seed42
-python inject_anomaly.py --view speed    --r 1 1.5 2 --out_dir artifacts/inject_speed/seed42
-python inject_anomaly.py --view vertical --r 1 1.5 2 --out_dir artifacts/inject_vertical/seed42
-python aggregate_cross.py --r 1 1.5 2 --out_dir artifacts/aggregated
+python 4_evaluation/inject_anomaly.py --view position --r 1 1.5 2 --out_dir artifacts/inject_position/seed42
+python 4_evaluation/inject_anomaly.py --view speed    --r 1 1.5 2 --out_dir artifacts/inject_speed/seed42
+python 4_evaluation/inject_anomaly.py --view vertical --r 1 1.5 2 --out_dir artifacts/inject_vertical/seed42
+python 4_evaluation/aggregate_cross.py --r 1 1.5 2 --out_dir artifacts/aggregated
 ```
 
 Each injection run uses one model seed (default 42 via `--model`); `aggregate_cross.py` expects one `seed*/` subfolder per seed

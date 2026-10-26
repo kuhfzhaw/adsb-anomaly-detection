@@ -16,9 +16,12 @@ All exclusions happen in clean_flights.py. check_flight only runs here as a cont
 fails it anyway, it is excluded but reported loudly (there should be none).
 
 Usage:
-  python prepare_sequences.py --max_flights 200 --out artifacts/sequences_test --no_rejected    # test
-  python prepare_sequences.py                                                               # full run
+  python 2_training/prepare_sequences.py --max_flights 200 --out artifacts/sequences_test --no_rejected    # test
+  python 2_training/prepare_sequences.py                                                               # full run
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import argparse
 import json
 import logging
@@ -36,7 +39,7 @@ from pipeline_common import ALL_FEATURES, check_flight, compute_all_features
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
-BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.abspath(__file__)))
+BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PIPE = f"{BASE}/artifacts/pipeline"
 RAW_FILE = f"{PIPE}/t_unified_final.parquet"
 OUT = f"{BASE}/artifacts/sequences"

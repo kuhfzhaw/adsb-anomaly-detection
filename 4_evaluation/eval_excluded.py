@@ -26,24 +26,27 @@ Features:
   * flag rate of normal test sequences per model/variant/r (the cost of the sensitivity)
 
 Procedure:
-  1. Check:  python eval_excluded.py --check --vertical_models <one model> --out_dir tmp
+  1. Check:  python 4_evaluation/eval_excluded.py --check --vertical_models <one model> --out_dir tmp
      (small self-test: r=1 must reproduce the previous flags exactly, mpx >= mp, r=2 <= r=1)
   2. If the structure of the thresholds is not recognised: --inspect prints it.
   3. Full run (e.g. via Slurm).
 
 Example:
-  python eval_excluded.py \
+  python 4_evaluation/eval_excluded.py \
     --position_models artifacts/model_position/E_pure_mse_seed{42,7,123}.keras \
     --speed_models    artifacts/model_speed/I_latent_smoothing_seed{42,7,123}.keras \
     --vertical_models artifacts/model_vertical/I_altitude_latent_smoothing_seed{42,7,123}.keras \
     --r 1 1.59 2.5 --variants mp mpx --out_dir artifacts/excluded
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import argparse, hashlib, inspect, json, os
 import numpy as np
 import pandas as pd
 from adsb_utils import compute_feature_thresholds, flag_anomalies
 import glob
-_BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.abspath(__file__)))
+_BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 FEATURES = {
     "position": ["dx", "dy", "turn_intensity"],

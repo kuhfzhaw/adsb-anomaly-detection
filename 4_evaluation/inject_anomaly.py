@@ -2,9 +2,9 @@
 """
 Synthetic anomaly injection test: how many injected anomalies does the matching model detect?
 
-    python inject_anomaly.py --view position --out_dir <dir>
-    python inject_anomaly.py --view speed    --out_dir <dir>
-    python inject_anomaly.py --view vertical --out_dir <dir>
+    python 4_evaluation/inject_anomaly.py --view position --out_dir <dir>
+    python 4_evaluation/inject_anomaly.py --view speed    --out_dir <dir>
+    python 4_evaluation/inject_anomaly.py --view vertical --out_dir <dir>
 
 How it works (all three views)
   1. Load the test flights from the raw table (artifacts/pipeline/t_unified_final.parquet).
@@ -27,6 +27,9 @@ Groups (--groups)
 The model (--model) defaults to the paper model of the view (seed 42); the foreign models for
 cross-specificity (--cross view=<model.keras>) are evaluated on the same injected flights.
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import argparse
 import json
 import os
@@ -40,7 +43,7 @@ from traffic.core import Flight, Traffic
 from pipeline_common import compute_all_features
 from cross_eval import Det, make_cross, save_cross   # next to this script
 
-_BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.abspath(__file__)))
+_BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 BASE = os.path.join(_BASE, "artifacts")
 RAW_FILE = os.path.join(BASE, "pipeline", "t_unified_final.parquet")
 
@@ -1010,8 +1013,8 @@ def main():
         args.model = info["model"]
     if args.data_dir is None:
         args.data_dir = f"{BASE}/sequences/{view}"
-    for path, hint in ((args.model, "Model missing. Train it with `python train_models.py --view {v}` or pass --model."),
-                       (RAW_FILE, "Raw table missing. Run `python clean_flights.py --combine --write_final` first "
+    for path, hint in ((args.model, "Model missing. Train it with `python 2_training/train_models.py --view {v}` or pass --model."),
+                       (RAW_FILE, "Raw table missing. Run `python 1_data/clean_flights.py --combine --write_final` first "
                                   "(see README, 'Reproducing the paper'); ADSB_BASE sets the base folder.")):
         if not os.path.exists(path):
             sys.exit(f"Not found: {path}\n{hint.format(v=view)}")
@@ -1024,7 +1027,7 @@ def main():
                 split_json = cand
                 break
     if split_json is None or not os.path.exists(split_json):
-        sys.exit("split.json not found. Run `python prepare_sequences.py` first or pass --split_json.")
+        sys.exit("split.json not found. Run `python 2_training/prepare_sequences.py` first or pass --split_json.")
     print("View:", view, "| Model:", args.model)
     print("split.json:", split_json, "(must match the split used for the models)",
           "| Level:", args.level if view == "speed" else "-",

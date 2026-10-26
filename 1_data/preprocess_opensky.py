@@ -1,13 +1,16 @@
 """Step 2: hourly raw files -> one resampled (1 Hz) Parquet file per day, clipped to the Swiss FIR (LSASFRA).
 
 Usage:
-    python preprocess_opensky.py --start 2024-01-01 --end 2024-01-31 [--in_dir DIR] [--out_dir DIR]
+    python 1_data/preprocess_opensky.py --start 2024-01-01 --end 2024-01-31 [--in_dir DIR] [--out_dir DIR]
 
 Input : <in_dir>/<YYYY-MM-DD>_<HH>-<HH>.parquet (output of fetch_opensky.py)
 Output: <out_dir>/<YYYY_MM_DD>.parquet, the input format of clean_flights.py and detect.py.
 Defaults: in_dir = $ADSB_BASE/data_fetching2024, out_dir = <in_dir>/preprocessed.
 --start and --end are inclusive. The Swiss FIR polygon is loaded by the traffic library (needs internet).
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import argparse
 import glob
 import os
@@ -136,7 +139,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--start", required=True, help="first day, YYYY-MM-DD")
     ap.add_argument("--end", required=True, help="last day (inclusive), YYYY-MM-DD")
-    ap.add_argument("--in_dir", default=opj(os.environ.get("ADSB_BASE", os.path.dirname(os.path.abspath(__file__))),
+    ap.add_argument("--in_dir", default=opj(os.environ.get("ADSB_BASE", os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
                                             "data_fetching2024"))
     ap.add_argument("--out_dir", default=None)
     args = ap.parse_args()

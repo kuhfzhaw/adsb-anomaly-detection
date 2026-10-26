@@ -1,14 +1,17 @@
 # train_models.py
 """Train one of the three feature-group LSTM autoencoders.
 
-    python train_models.py --view position --seed 42
-    python train_models.py --view speed    --seed 42
-    python train_models.py --view vertical --seed 42
+    python 2_training/train_models.py --view position --seed 42
+    python 2_training/train_models.py --view speed    --seed 42
+    python 2_training/train_models.py --view vertical --seed 42
 
 The configurations used in the paper are defined in CONFIGS below
 (position: E_pure_mse, speed: I_latent_smoothing,
 vertical: I_altitude_latent_smoothing).
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import argparse
 import json
 import os
@@ -18,7 +21,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras import layers, models
 
-_BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.abspath(__file__)))
+_BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 FEATURES = {
     "position": ("dx", "dy", "turn_intensity"),
@@ -155,7 +158,7 @@ def main():
 
     npz = f"{data_dir}/sequences.npz"
     if not os.path.exists(npz):
-        raise SystemExit(f"Missing {npz}. Run `python make_views.py` first "
+        raise SystemExit(f"Missing {npz}. Run `python 2_training/make_views.py` first "
                          "(see README, 'Reproducing the paper').")
     data = np.load(npz)
     X_train_scaled = data["X_train_scaled"]

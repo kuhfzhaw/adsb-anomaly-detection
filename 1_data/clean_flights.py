@@ -25,10 +25,13 @@ Output per day under <OUT>/<day>/:
 Rejected flights go through exactly the same steps 1-3 as the accepted ones.
 
 Usage:
-  python clean_flights.py --day_index 0 --max_flights 100            # quick test on 100 flights
-  python clean_flights.py --day_index 3 --skip_done                  # one day
-  python clean_flights.py --combine [--write_final]                  # funnel (and the combined Parquet file)
+  python 1_data/clean_flights.py --day_index 0 --max_flights 100            # quick test on 100 flights
+  python 1_data/clean_flights.py --day_index 3 --skip_done                  # one day
+  python 1_data/clean_flights.py --combine [--write_final]                  # funnel (and the combined Parquet file)
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import argparse
 import os
 import time
@@ -37,7 +40,7 @@ from glob import glob
 import numpy as np
 import pandas as pd
 
-BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.abspath(__file__)))
+BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DAY_DIR = f"{BASE}/data_fetching2024/preprocessed"
 OUT = f"{BASE}/artifacts/pipeline"
 

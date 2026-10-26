@@ -6,15 +6,18 @@ fits the scaler on the training sequences and writes artifacts/sequences/<view>/
 ADSB_BASE sets the base folder (default: folder of this script).
 
 Usage:
-  python make_views.py
+  python 2_training/make_views.py
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import os
 import sys
 import joblib
 import numpy as np
 from pipeline_common import ALL_FEATURES, VIEWS
 
-OUT = os.path.join(os.environ.get("ADSB_BASE", os.path.dirname(os.path.abspath(__file__))), "artifacts", "sequences")
+OUT = os.path.join(os.environ.get("ADSB_BASE", os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "artifacts", "sequences")
 
 
 def need(path, hint):
@@ -39,7 +42,7 @@ def balanced_indices(turn_scores, min_points=3, target_ratio=0.10, oversample_fa
 def main():
     """Writes sequences.npz and scaler.joblib for every view."""
     need(f"{OUT}/sequences_all.npz",
-         "Run `python prepare_sequences.py` first (see README, 'Reproducing the paper'). ADSB_BASE sets the base folder.")
+         "Run `python 2_training/prepare_sequences.py` first (see README, 'Reproducing the paper'). ADSB_BASE sets the base folder.")
     d = np.load(f"{OUT}/sequences_all.npz")
     for name, cfg in VIEWS.items():
         cols = [ALL_FEATURES.index(f) for f in cfg["features"]]

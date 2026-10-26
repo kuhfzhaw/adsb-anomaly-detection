@@ -5,11 +5,14 @@ https://mode-s.org/pyopensky/); credentials are read from the pyopensky config f
 never belong in this repository.
 
 Usage:
-    python fetch_opensky.py --dates 2024-02-15 2024-03-01 [--out_dir DIR]
+    python 1_data/fetch_opensky.py --dates 2024-02-15 2024-03-01 [--out_dir DIR]
 
 Output: <out_dir>/<YYYY-MM-DD>_<HH>-<HH>.parquet, one file per hour (existing files are skipped).
 Default out_dir: $ADSB_BASE/data_fetching2024 (ADSB_BASE defaults to the folder of this script).
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import argparse
 import os
 import rs1090
@@ -27,7 +30,7 @@ from traffic.data import opensky
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dates", nargs="+", required=True, help="days to fetch, format YYYY-MM-DD")
-    ap.add_argument("--out_dir", default=os.path.join(os.environ.get("ADSB_BASE", os.path.dirname(os.path.abspath(__file__))),
+    ap.add_argument("--out_dir", default=os.path.join(os.environ.get("ADSB_BASE", os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
                                                       "data_fetching2024"))
     args = ap.parse_args()
     os.makedirs(args.out_dir, exist_ok=True)

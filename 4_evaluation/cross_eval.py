@@ -7,6 +7,9 @@ Must be located next to eval_excluded.py. Usage in the injection script (inject_
   det   = Det("speed", args.model, args.data_dir, args.extreme_q)               # own model
   cross = make_cross(args.cross, args.cross_data_root, args.extreme_q)          # e.g. ["position=<path>.keras", ...]
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import joblib
 import numpy as np
 import pandas as pd

@@ -5,9 +5,12 @@ artifacts/model_<view>/ (shipped with the repository or trained with train_model
 ADSB_BASE sets the base folder (default: folder of this script).
 
 Usage:
-  python baseline_fpr.py
+  python 4_evaluation/baseline_fpr.py
 Output: artifacts/baseline_fpr.csv and a summary (mean/std over seeds) on screen.
 """
+import os as _os, sys as _sys  # REPO_ROOT_SHIM
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import os
 import sys
 import numpy as np
@@ -18,7 +21,7 @@ MODELS = {"position": "E_pure_mse", "speed": "I_latent_smoothing",
           "vertical": "I_altitude_latent_smoothing"}
 SEEDS = [42, 7, 123, 155, 17, 98]
 RS = [1.0, 1.5, 2.0]
-BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.abspath(__file__)))
+BASE = os.environ.get("ADSB_BASE", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def need(path, hint):
@@ -31,11 +34,11 @@ rows = []
 for view, name in MODELS.items():
     ddir = f"{BASE}/artifacts/sequences/{view}"
     need(f"{ddir}/sequences.npz",
-         "Run `python prepare_sequences.py` and then `python make_views.py` first (see README, 'Reproducing the paper').")
+         "Run `python 2_training/prepare_sequences.py` and then `python 2_training/make_views.py` first (see README, 'Reproducing the paper').")
     Xt = np.load(f"{ddir}/sequences.npz")["X_test_scaled"]
     for seed in SEEDS:
         mp = f"{BASE}/artifacts/model_{view}/{name}_seed{seed}.keras"
-        need(mp, f"Model file not found. Use the models shipped in artifacts/ or train them with `python train_models.py --view {view}`.")
+        need(mp, f"Model file not found. Use the models shipped in artifacts/ or train them with `python 2_training/train_models.py --view {view}`.")
         det = ce.Det(view, mp, ddir)
         for r in RS:
             fl = ce.flag_anomalies(det.cm, Xt, det.features, ce.scale_thr(det.thr, r))["any_anomaly"]
