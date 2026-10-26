@@ -13,8 +13,8 @@ authors:
     orcid: "https://orcid.org/0000-0001-7649-6581"
 repository-code: "https://github.com/kuhfzhaw/adsb-anomaly-detection"
 license: CC-BY-4.0
-version: "1.0.0"
-date-released: "2026-10-22"
+version: "1.0.1"
+date-released: "2026-10-26"
 keywords:
   - ADS-B
   - anomaly detection
@@ -30,3 +30,4 @@ preferred-citation:
       given-names: Manuel
   collection-title: "OpenSky Symposium 2026 (OSN26)"
   year: 2026
+
