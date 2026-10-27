@@ -26,11 +26,11 @@ python 3_detection/detect.py --input my_flights.parquet --out_dir results --r 1.
 
 Tested with Python 3.13.
 
-**Quick check.** No example data is shipped, because OpenSky data may not be redistributed. To try the detector,
-fetch a single day as described under [Data](#data) and run `python 3_detection/detect.py --input <day file> --max_flights 30
+**Quick check.**  To try the detector, fetch a single day as described under [Data](#data) and run 
+`python 3_detection/detect.py --input <day file> --max_flights 30
 --out_dir results` on it.
 
-**Input.** A Parquet or CSV file with one row per second and flight, in the format of
+**Input.** A Parquet file with one row per second and flight, in the format of
 OpenSky state vectors as returned by the `traffic` library:
 
 | Column | Unit | Required |
@@ -58,13 +58,12 @@ time step within flights is not about 1 s.
 **Options.** `--r` scales all thresholds (paper: 1, 1.5, 2; default 1.5; lower = more
 sensitive). `--seeds 42` uses one model per group, `--seeds all` takes a majority vote over
 all six seeds. `--views` selects feature groups. `--no_outlier_filter` skips the `traffic`
-outlier filter. `--model_root` points to a different model folder (default: `artifacts/` next
-to `detect.py`).
+outlier filter. `--model_root` points to a different model folder (default: `artifacts/` in the repository root).
 
 **How to read the results**
 
 - **Processing is identical to training.** Each flight is cleaned as in `clean_flights.py`
-  (on-ground rows and repeated positions removed, `traffic` filter `aggressive`, features),
+  (on-ground rows and repeated positions removed, `traffic` filter `aggressive`, feature computation),
   then cut into 60 s sequences with stride 15 s. A flight is split into segments at time gaps
   longer than 1 s; each segment is checked separately. Flights or segments shorter than 60 s
   cannot be checked and appear in `flights_summary.csv` with a reason.
@@ -102,16 +101,16 @@ repository root and are imported by all scripts. All commands are run from the r
 
 | File | Purpose |
 |------|---------|
-| `3_detection/detect.py` | Apply the trained models to your own OpenSky file |
 | `1_data/fetch_opensky.py`, `1_data/preprocess_opensky.py` | Fetch raw OpenSky data and resample it to daily 1 Hz files |
 | `1_data/clean_flights.py` | Raw OpenSky day files to one cleaned table (`t_unified_final.parquet`) |
 | `2_training/prepare_sequences.py` | Flight filtering, 60 s sequences (stride 15), train/val/test split by flight |
 | `2_training/make_views.py` | Per-feature-group views, scaler fitted on train |
 | `2_training/train_models.py` | Model training, one run per view and seed (`--view position\|speed\|vertical`) |
 | `2_training/make_thresholds.py` | Thresholds from the validation set |
+| `3_detection/detect.py` | Apply the trained models to your own OpenSky file |
 | `4_evaluation/baseline_fpr.py` | Share of normal test sequences flagged (false-alarm rates) |
 | `4_evaluation/inject_anomaly.py` | Synthetic anomaly injection tests (`--view position\|speed\|vertical`) |
-| `4_evaluation/aggregate_cross.py`, `4_evaluation/cross_eval.py` | Cross-model evaluation (which model flags which injection) |
+| `4_evaluation/cross_eval.py`, `4_evaluation/aggregate_cross.py` | Cross-model evaluation (which model flags which injection) |
 | `4_evaluation/eval_excluded.py` | Evaluation on sequences excluded by the quality filter (detection at the rule violation, all three models) |
 | `adsb_utils.py` | Shared helpers: filtering, sequence building, anomaly flagging, thresholds |
 | `pipeline_common.py` | Feature and view definitions. `altitude_div` and `altitude_mul` are referenced by the saved vertical scaler (`scaler.joblib`); do not rename or move them |
@@ -127,7 +126,8 @@ artifacts/
   model_speed/      I_latent_smoothing_seed<seed>.keras + _thresholds.json, _log.csv, _history.json, 6 seeds
   model_vertical/   I_altitude_latent_smoothing_seed<seed>.keras + _thresholds.json, _log.csv, _history.json, 6 seeds
   sequences/
-    split.json, preprocess_meta.json   flight id -> train/val/test split, numbers for the paper
+    split.json     flight id -> train/val/test split
+    preprocess_meta.json  dataset statistics: flights and sequences per split, sequence length, stride, split seed
     position/ speed/ vertical/         scaler.joblib of each view (sequences.npz is not included)
 ```
 
@@ -166,9 +166,9 @@ Proc. 13th IEEE/ACM International Symposium on Information Processing in Sensor 
 ## Reproducing the paper
 
 All scripts read the base directory from the environment variable `ADSB_BASE`
-(default: the folder of the script). Raw day files go to `data_fetching2024/preprocessed/`
+(default: the repository root). Raw day files go to `data_fetching2024/preprocessed/`
 (one Parquet file per day, same columns as above). `detect.py` is the exception for the
-models: it loads them from `artifacts/` next to the script (or from `--model_root`).
+models: it loads them from `artifacts/` in the repository root (or from `--model_root`).
 
 ```bash
 export ADSB_BASE=/path/to/workdir
