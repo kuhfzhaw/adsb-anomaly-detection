@@ -3,7 +3,7 @@
 
 For every view: selects its feature columns, balances the training set if configured (VIEWS in pipeline_common),
 fits the scaler on the training sequences and writes artifacts/sequences/<view>/sequences.npz and scaler.joblib.
-ADSB_BASE sets the base folder (default: folder of this script).
+ADSB_BASE sets the base folder (default: repository root).
 
 Usage:
   python 2_training/make_views.py

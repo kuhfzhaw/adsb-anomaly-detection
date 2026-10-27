@@ -2,7 +2,7 @@
 
 Needs artifacts/sequences/<view>/sequences.npz (run make_views.py) and the trained models in
 artifacts/model_<view>/ (shipped with the repository or trained with train_models.py).
-ADSB_BASE sets the base folder (default: folder of this script).
+ADSB_BASE sets the base folder (default: repository root).
 
 Usage:
   python 4_evaluation/baseline_fpr.py

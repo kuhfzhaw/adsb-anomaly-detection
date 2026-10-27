@@ -8,7 +8,7 @@ Usage:
     python 1_data/fetch_opensky.py --dates 2024-02-15 2024-03-01 [--out_dir DIR]
 
 Output: <out_dir>/<YYYY-MM-DD>_<HH>-<HH>.parquet, one file per hour (existing files are skipped).
-Default out_dir: $ADSB_BASE/data_fetching2024 (ADSB_BASE defaults to the folder of this script).
+Default out_dir: $ADSB_BASE/data_fetching2024 (ADSB_BASE defaults to the repository root).
 """
 import os as _os, sys as _sys  # REPO_ROOT_SHIM
 _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
