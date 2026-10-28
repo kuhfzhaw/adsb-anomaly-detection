@@ -139,7 +139,7 @@ folders of the evaluation scripts.
 
 Raw ADS-B data and the intermediate sequence files are **not** part of this
 repository. The data come from the OpenSky Network and are subject to its terms
-of use (https://opensky-network.org); OpenSky data may not be redistributed, so no example data is included. The trained models, scalers, thresholds and the
+of use (https://opensky-network.org). The trained models, scalers, thresholds and the
 train/val/test split (`artifacts/`) are included, so the detector can be applied to your
 own data without retraining.
 
